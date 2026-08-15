@@ -1,0 +1,62 @@
+* {
+    transition: .5s;
+    font-family: Lexend, sans-serif;
+}
+
+*:focus {
+    outline: 0;
+}
+
+html {
+    font-family: Lexend, sans-serif;
+}
+
+textarea {
+    display: block;
+    border: 1px solid #333;
+    resize: none;
+}
+
+input[type=password] {
+    display: block;
+    border: 1px solid #333;
+}
+
+button {
+    background: #5555FF;
+    color: #FFF;
+    padding: .5rem;
+    border-radius: .3rem;
+    display: block;
+}
+
+button:disabled {
+    background: #7777;
+}
+
+#output div {
+    border: 1px solid #333;
+    margin-top: .25rem;
+}
+
+#output span {
+    padding: .125rem;
+}
+
+h3 {
+    font-size: 1.15rem;
+    font-weight: bold;
+    text-align: center;
+    margin: .5rem 0;
+}
+
+.block input:checked+span {
+    background: #5555FF;
+    color: #FFF;
+}
+
+#toggler {
+    color: #5555FF;
+    padding: 0;
+    background: transparent;
+}
