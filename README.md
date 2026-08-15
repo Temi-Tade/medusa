@@ -25,14 +25,11 @@ No servers. No cloud. No accounts.
 ### Security Model
 
 **v1 Uses XOR**  
-Medusa v1 uses a XOR encryption technique.
-
-This provides casual privacy and obfuscation. It is not resistant to known-plaintext or frequency attacks.  
-Do not use for classified, financial, or other high-sensitivity data.
-
-The goal of v1 is speed, simplicity, and a stable file format. Future versions will be drop-in compatible via the header version field.
-
-Use at your own risk. Keep backups.
+- Medusa v1 uses a XOR encryption technique.
+- This provides casual privacy and obfuscation. It is not resistant to known-plaintext or frequency attacks.  
+- Do not use for classified, financial, or other high-sensitivity data.
+- The goal of v1 is speed, simplicity, and a stable file format. Future versions will be drop-in compatible via the header version field.
+- Use at your own risk. Keep backups.
 
 ### Quick Start
 
