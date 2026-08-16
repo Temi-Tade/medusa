@@ -4,18 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>React Todo</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="./src/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lexend">
   <style type="text/tailwindcss">
     @theme {
-      --color-brand-primary: #5555FF;
+      --color-brand-primary: #5555BF;
     }
   </style>
 </head>
 
 <body class="h-[100dvh]">
-  <header class="sticky top-0 bg-[#FFF] shadow-md p-2 flex justify-between items-center">
+  <header class="sticky top-0 bg-[#FFF] shadow-sm p-2 flex justify-between items-center">
     <div style="display: flex;">
       <!--<img src="./public/medusa.png" alt="Medusa Logo" loading="lazy" width="30"/>--> &nbsp;
       <h1 class="text-3xl font-bold">Medusa</h1>
@@ -23,7 +23,7 @@
     
     <div>
       <!-- lucide does not have 3rd party icons, so i had to get the svg with the help of AI :) -->
-      <a href="https://github.com/Temi-Tade/Medusa">
+      <a href="https://github.com/Temi-Tade/medusa">
         <svg 
           xmlns="http://w3.org" 
           width="24" 
@@ -42,7 +42,11 @@
     </div>
   </header>
   
-  <div class="p-3 h-[100%] grid place-items-center">
+  <div class="p-3 h-[100%] grid place-items-center relative">
+    <div class="absolute p-1 bg-[#5555FF77] top-2 rounded-sm mx-8 z-[-20]">
+      <p class="text-center p-2 bg-[#5555BF] text-[#FFF] text-[14px]">An open source file password-based encryption tool with lossless decryption.</p>
+    </div>
+    
     <div class="p-2 w-full">
       <div id="mode_picker" class="p-3 my-2 flex justify-center items-center mb-8">
         <label for="enc_file_mode" class="block">
@@ -75,7 +79,7 @@
         <p id="enc_msg" class="mb-2 text-center text-sm italic">Remember your password, you will need it to decrypt the file.</p>
         <label for="password" class="block relative">
           <input 
-            class="p-2 rounded-sm w-full border-1"
+            class="p-2 rounded-sm w-full"
             type="password"
             id="password"
             placeholder="Enter a password..."
@@ -92,25 +96,8 @@
       </div>
     </div>
     
-    <!--<div id="output" class="hidden grid place-items-center">
-      <div>
-        <span>Original:</span>
-        <textarea id="raw" rows="8" cols="40"></textarea>
-      </div>
-      
-      <div>
-        <span>Encrypted:</span>
-        <textarea id="encoded" rows="8" cols="40"></textarea>
-      </div>
-      
-      <div>
-        <span>Decrypted:</span>
-        <textarea id="decoded" rows="8" cols="40"></textarea>
-      </div>
-    </div>-->
-    
     <div id="save_btn_wrap" class="hidden">
-      <p class="text-md italic text-center" id="save_message"></p>
+      <p class="text-[12px] text-center" id="save_message"></p>
       <button class="m-auto my-2" id="save_btn">Save file</button>
     </div>
   </div>
@@ -119,7 +106,7 @@
     <div id="modal" class="w-[80%] bg-[#FFF] p-2 rounded-sm"></div>
   </div>
   
-  <script src="main.js" type="module"></script>
+  <script src="./src/main.js" type="module"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     lucide.createIcons();

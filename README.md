@@ -1,11 +1,7 @@
 # Medusa
 
-### Seal your files in stone.
-
-A lossless, client-side file encryption tool.  
-Encrypt any file into a self-contained `.medusa` container.  
-Decrypt only with the key.
-
+## An open source, client-side file encryption tool, with lossless decryption.
+Encrypt any file into a `.medusa` file using a password, share the file and decrypt with the password.  
 No servers. No cloud. No accounts.
 
 ---

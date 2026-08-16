@@ -17,13 +17,17 @@ textarea {
     resize: none;
 }
 
-input[type=password] {
+input[type=password], input[type=text] {
     display: block;
-    border: 1px solid #333;
+    border: 1.25px solid #333;
+}
+
+input[type=password]:focus, button:hover, button:focus {
+    box-shadow: 0 0 2px 3px #5555BF55;
 }
 
 button {
-    background: #5555FF;
+    background: #5555BF;
     color: #FFF;
     padding: .5rem;
     border-radius: .3rem;
@@ -51,12 +55,12 @@ h3 {
 }
 
 .block input:checked+span {
-    background: #5555FF;
+    background: #5555BF;
     color: #FFF;
 }
 
 #toggler {
-    color: #5555FF;
+    color: #5555BF;
     padding: 0;
     background: transparent;
 }

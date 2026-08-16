@@ -1,7 +1,4 @@
-// upload file - enter pwd - encrypt 
-// upload file - enter pwd - decrypt
-
-import { createModal, closeModal, toggle_password, saveFile } from "./lib/ui.js";
+import { createModal, closeModal, toggle_password, saveFile, toggle_display } from "./lib/ui.js";
 
 let encrypted_buffer;
 let decrypted_buffer;
@@ -13,17 +10,6 @@ const FILE_PARAMS = {
     size: undefined
 }
 
-function toggle_display(element) {
-    const element_class = Array.from(element.classList).join(" ")
-    if (element_class.includes("hidden")) {
-        const new_class = element_class.replace("hidden", "")
-        element.setAttribute("class", new_class);
-    } else {
-        const new_class = `hidden ${element_class}`;
-        element.setAttribute("class", new_class);
-    }
-}
-
 function display_file_contents(f) {
     const url = URL.createObjectURL(f)
     if (f.type.startsWith('image')) {
@@ -32,8 +18,8 @@ function display_file_contents(f) {
         img.onload = function() {
             URL.revokeObjectURL(url);
         }
-    } else if(mode === "decryption") {
-        file_preview.innerHTML = "<p class='text-center text-lg'>Files cannot be previewed in decryption mode</p>"
+    } else if(mode === "decryption" && !FILE_PARAMS.type) {
+        file_preview.innerHTML = "<p class='text-center text-lg backdrop-blur-md' id='no_preview'>Files cannot be previewed in decryption mode</p>"
     } else {
         file_preview.innerHTML += `<embed id="embed" src="${url}" type="${f.type}" class="w-75 m-auto"/>`;
         
@@ -45,10 +31,8 @@ function display_file_contents(f) {
 
 function get_file_details(f) {
     FILE_PARAMS.name = f.name;
-    FILE_PARAMS.type = (f.type === "" && mode === "decryption") ? "Encrypted File" : f.type;
+    FILE_PARAMS.type = f.type;
     FILE_PARAMS.size = f.size;
-    
-    console.log(FILE_PARAMS)
     
     const keys = Object.keys(FILE_PARAMS);
     file_details.innerHTML += "<br/><h3>File Properties</h3>";
@@ -57,30 +41,71 @@ function get_file_details(f) {
         file_details.innerHTML += `
             <p class='p-2 rounded-sm my-1 ${keys.indexOf(key) % 2 !== 0 ? 'bg-[#CCC7]' : ''} flex justify-between items-center'>
                 <span class='p-1 block w-[50%]'>${key}</span>
-                <span class='p-1 block w-[50%] overflow-auto text-right break-keep'>${FILE_PARAMS[key]} ${key === 'size' ? 'bytes' : ''}</span>
+                <span id='file_${key}' class='p-1 block w-[50%] overflow-auto text-right break-keep'>${FILE_PARAMS[key]} ${key === 'size' ? 'bytes' : ''}</span>
             </p>
         `;
     }
 }
 
 async function scrambleFile(file, password) {
-    const buffer = new Uint8Array(await file.arrayBuffer());
+    let blob;
+    let result;
     const passBytes = new TextEncoder().encode(password);
-    //console.log(file, buffer, passBytes)
-
-    const result = buffer.map((byte, i) => byte ^ passBytes[i % passBytes.length]);
     
-    const blob = new Blob([result], {type: file.type});
-    //blob.bytes().then( x => console.log(x));
+    if (mode === "encryption") {
+        const header = {
+            app: "Medusa",
+            v: 1,
+            original_name: file.name,
+            mime: file.type
+        };
+        const headerBytes = new TextEncoder().encode(JSON.stringify(header));
+        const headerLength = new Uint32Array([headerBytes.length]);
+        const buffer = new Uint8Array(await file.arrayBuffer());
+    
+        result = buffer.map((byte, i) => byte ^ passBytes[i % passBytes.length]);
+        
+        blob = new Blob([headerLength.buffer, headerBytes, result], {type: file.type});
+    } else {
+        const buf = await file.arrayBuffer();
+        const view = new DataView(buf);
+        const headerLength = view.getUint32(0, true);
+        
+        if (headerLength > 2048 || headerLength < 2 || 4 + headerLength > buf.byteLength) {
+            createModal("Please upload a <code>.medusa</code> file that was encrypted with this tool. Reloading page...");
+            return false;
+        }
+        
+        const headerBytes = new Uint8Array(buf, 4, headerLength);
+        const header = JSON.parse(new TextDecoder().decode(headerBytes));
+        const buffer = new Uint8Array(buf, 4 + headerLength);
+        
+        FILE_PARAMS.type = header.mime;
+        FILE_PARAMS.name = header.original_name;
+        file_name.textContent = header.original_name;
+        file_type.textContent = header.mime;
+        createModal(`File type detected: ${header.mime}`);
+        
+        result = buffer.map((byte, i) => byte ^ passBytes[i % passBytes.length]);
 
+        file_preview.removeChild(no_preview);
+        display_file_contents(new File([result], header.original_name, {type: header.mime}));
+        
+        blob = new Blob([result], { type: header.mime });
+    }
+    
     return blob.bytes().then(x => x);
 }
 
 file.oninput = function(f) {
     const file = f.target.files[0];
     
-    if (mode === "decryption" && !file.name.includes(".enc")) {
+    if (mode === "decryption" && !file.name.endsWith(".medusa")) {
         createModal("Please upload a file encrypted with this tool");
+        return;
+    }
+    if (mode === "encryption" && file.name.endsWith(".medusa")) {
+        createModal("Seems like this file has been encrypted.");
         return;
     }
     
@@ -113,23 +138,23 @@ file.oninput = function(f) {
             if (mode === "encryption") encrypted_buffer = await scrambleFile(file, pwd);
             if (mode === "decryption") decrypted_buffer = await scrambleFile(file, pwd);
             
-            /*raw.value = intArray.map(i => String.fromCodePoint(i)).join('');
-            if (mode === "encryption") encoded.value = encrypted_buffer;
-            if (mode === "decryption") decoded.value = decrypted_buffer;*/
-            save_message.innerHTML = `${FILE_PARAMS.name} has been ${mode === "encryption" ? "encrypted" : "decrypted"}. Click the button below to save the file.`;
+            if (decrypted_buffer === false) {
+                setTimeout(() => history.go(0), 1500)
+                return;
+            }
+            
+            save_message.innerHTML = `<i>${FILE_PARAMS.name}</i> has been ${mode === "encryption" ? "encrypted" : "decrypted"}. Click the button below to save the file.`;
             toggle_display(save_btn_wrap);
         }
         
         fileReader.readAsArrayBuffer(file);
         
-        //toggle_display(file_details);
         toggle_display(pwd_wrap);
-        //toggle_display(output);
     }
 }
 
 save_btn.onclick = async function() {
-    await saveFile(`${mode === "encryption" ? `${FILE_PARAMS.name}.enc` : FILE_PARAMS.name.replace(".enc", "")}`);
+    await saveFile(`${mode === "encryption" ? `${FILE_PARAMS.name}.medusa` : FILE_PARAMS.name.replace(".medusa", "")}`, mode === "encryption" ? encrypted_buffer : decrypted_buffer);
 }
 
 password.oninput = function(e) {
@@ -143,17 +168,17 @@ password.oninput = function(e) {
 enc_file_mode.oninput = function(e) {
     if (e.target.checked) {
         mode = "encryption";
+        file.removeAttribute("accept");
     }
 }
 
 dec_file_mode.oninput = function(e) {
     if (e.target.checked) {
         mode = "decryption";
+        file.setAttribute("accept", ".medusa");
     }
 }
 
 toggler.onclick = function() {
     toggle_password();
 }
-
-export { toggle_display }
