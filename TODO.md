@@ -1,0 +1,4 @@
+- md5 checker
+- uniquely identify enc files during decryption 
+- share
+- confirm password 
