@@ -48,8 +48,8 @@ Open index.html. No build, no install.
 ├── index.html
 ├── src/
     └── style.css
-    └── main.js
-├── lib/
+    ├── main.js
+    ├── lib/
     └── lib functions 
 ├── style.css
 └── public/
