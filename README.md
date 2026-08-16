@@ -47,11 +47,10 @@ Open index.html. No build, no install.
 ```bash
 ├── index.html
 ├── src/
-    └── style.css
-    └── main.js
-├── lib/
-    └── lib functions 
-├── style.css
+    ├── style.css
+    ├── main.js
+    ├── lib/
+        └── #lib functions 
 └── public/
     └── medusa.png
 ```
