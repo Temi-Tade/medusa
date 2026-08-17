@@ -22,7 +22,7 @@ input[type=password], input[type=text] {
     border: 1.25px solid #333;
 }
 
-input[type=password]:focus, button:hover, button:focus {
+input[type=password]:focus, button:hover, button:focus, #file_label span:focus, #file_label span:hover {
     box-shadow: 0 0 2px 3px #5555BF55;
 }
 
