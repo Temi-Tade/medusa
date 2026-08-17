@@ -102,11 +102,13 @@ file.oninput = function(f) {
     const file = f.target.files[0];
     
     if (mode === "decryption" && !file.name.endsWith(".medusa")) {
-        createModal("Please upload a file encrypted with this tool");
+        createModal("Please upload a file encrypted with this tool. Reloading page...");
+        setTimeout(() => history.go(0), 1500);
         return;
     }
     if (mode === "encryption" && file.name.endsWith(".medusa")) {
-        createModal("Seems like this file has been encrypted.");
+        createModal("Seems like this file has been encrypted. Reloading page...");
+        setTimeout(() => history.go(0), 1500);
         return;
     }
     
@@ -140,7 +142,7 @@ file.oninput = function(f) {
             if (mode === "decryption") decrypted_buffer = await scrambleFile(file, pwd);
             
             if (decrypted_buffer === false) {
-                setTimeout(() => history.go(0), 1500)
+                setTimeout(() => history.go(0), 1500);
                 return;
             }
             
