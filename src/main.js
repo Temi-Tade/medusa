@@ -98,6 +98,7 @@ async function scrambleFile(file, password) {
 }
 
 file.oninput = function(f) {
+    toggle_display(desc);
     const file = f.target.files[0];
     
     if (mode === "decryption" && !file.name.endsWith(".medusa")) {
